@@ -16,16 +16,38 @@ public class Main {
         NodeList list = tree.split(6);
         (new BSTree(list.r1)).printTree();
         (new BSTree(list.r2)).printTree();*/
-        testzigzag();
+        //testzigzag();
+        BSTree tree1 = new BSTree();
+        long start = System.currentTimeMillis();
+        int N = 13000;
+        for (int i = 0; i < N; i++) {
+            tree1.insert(i);
+        }
+        System.out.println("Time for sequentially inserting " + N + " objects into BST = " + (System.currentTimeMillis() - start) + " msec");
+        start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            tree1.find((int) (Math.random() * (N / 10)));
+        }
+        System.out.println("Time for finding " + (N / 10) + " different objects in BST= " + (System.currentTimeMillis() - start) + " msec");
 
+        SplayTree tree2 = new SplayTree();
+        start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            tree2.insert(i);
+        }
+        System.out.println("Time for sequentially inserting " + N + " objects into SplayTree = " + (System.currentTimeMillis() - start) + " msec");
+        start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            tree2.find((int) (Math.random() * (N / 10)));
+        }
+        System.out.println("Time for finding " + (N / 10) + " different objects in SplayTree = " + (System.currentTimeMillis() - start) + " msec");
     }
 
-    static void testzigzag(){
+    static void testzigzag() {
         SplayTree tree1 = new SplayTree();
         int[] keyList = {5, 7, 2, 3, 1, 6, 8};
         for (int i = 0; i < keyList.length; i++) {
             tree1.insert(keyList[i]);
-            Node x = tree1.findWithoutSplaying(5);
             /*if(x != null && x.parent!=null){
                 System.out.println("5 parent " + x.parent.key);
                 System.out.println("after add "+ keyList[i]);

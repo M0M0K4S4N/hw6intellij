@@ -86,53 +86,68 @@ public class BSTree extends BTreePrinter {
     }
 
 
+
+
+
     public void singleRotateFromLeft(Node y) {
-        if (y != null) {
+        if (y != null) { //check mull node
             Node x = y.left;
-            y.left = x.right;
+            Node b = x.right;
+
+            y.left = b;
+            if(b != null){ //sometimes x.right doesnt exit
+                b.parent = y;
+            }
             x.right = y;
             x.parent = y.parent;
             y.parent = x;
-            if (x.parent == null) {
+            if (x.parent == null) { //if this node "x" is root node update root
                 root = x;
-                return;
+            }else{
+                if (x.parent.key < x.key) { //check for way of parent link to child
+                    x.parent.right = x;
+                } else {
+                    x.parent.left = x;
+                }
             }
-            if (x.parent.key < x.key) {
-                x.parent.right = x;
-            } else {
-                x.parent.left = x;
-            }
+
 
 
         }
     }
 
     public void singleRotateFromRight(Node y) {
-        if (y != null) {
+        if (y != null) {//check mull node
             Node x = y.right;
-            y.right = x.left;
+            Node b = x.left;
+
+            y.right = b;
+            if(b != null){//sometimes x.right doesnt exit
+                b.parent = y;
+            }
             x.left = y;
             x.parent = y.parent;
             y.parent = x;
-            if (x.parent == null) {
+            if (x.parent == null) {//if this node "x" is root node update root
                 root = x;
-                return;
+            }else{
+                if (x.parent.key < x.key) {//check for way of parent link to child
+                    x.parent.right = x;
+                } else {
+                    x.parent.left = x;
+                }
             }
-            if (x.parent.key < x.key) {
-                x.parent.right = x;
-            } else {
-                x.parent.left = x;
-            }
+
 
         }
     }
 
-    public void doubleRotateFromLeft(Node y) {
+    public void doubleRotateFromLeft(Node y) { //rotate inner left
         singleRotateFromRight(y.left);
         singleRotateFromLeft(y);
     }
 
-    public void doubleRotateFromRight(Node y) {
+    public void doubleRotateFromRight(Node y) { //rotate inner right
         singleRotateFromLeft(y.right);
         singleRotateFromRight(y);
     }
@@ -223,26 +238,26 @@ public class BSTree extends BTreePrinter {
 
 
     public static boolean isMergeable(Node r1, Node r2) {
-        if (r1 == null || r2 == null) {
+        if (r1 == null || r2 == null) { //when r1 or r2 is empty ,it can merge
             return true;
         }
 
-        if (r1.right == null && r2.left == null) {
-            if (r1.key < r2.key) {
+        if (r1.right == null && r2.left == null) { // when r1 is max value of tree and r2 is min value of tree
+            if (r1.key < r2.key) {  //if r1 < r2 it can merge
                 return true;
             } else {
                 return false;
             }
-        } else if (r1.right == null && r2.left != null) {
-            return isMergeable(r1, r2.left);
+        } else if (r1.right == null && r2.left != null) { //if r1 cannot go right to get max , and r2 still go left
+            return isMergeable(r1, r2.left); //then r2 go left to get minvalue
         } else {
-            return isMergeable(r1.right, r2);
+            return isMergeable(r1.right, r2); //otherwise r1 can go right
         }
 
     }
 
     public static Node mergeWithRoot(Node r1, Node r2, Node t) {
-        if (isMergeable(r1, r2)) {
+        if (isMergeable(r1, r2)) { //if r1 and r2 can merge
             t.left = r1;
             t.right = r2;
             if (r1 != null) r1.parent = t;
@@ -255,9 +270,9 @@ public class BSTree extends BTreePrinter {
     }
 
     public void merge(BSTree tree2) {
-        if (isMergeable(this.root, tree2.root)) {
+        if (isMergeable(this.root, tree2.root)) { //if it can merge
 
-            Node newRoot = new Node(findMax(this.root).key);
+            Node newRoot = new Node(findMax(this.root).key); //create new temporary root with max value of tree
             delete(findMax(this.root).key);
             newRoot.left = this.root;
             newRoot.right = tree2.root;
@@ -271,19 +286,19 @@ public class BSTree extends BTreePrinter {
     }
 
     public NodeList split(int key) {
-        return split(this.root, key); // This is incorrect, fix this by calling static split
+        return split(this.root, key);
     }
 
     public static NodeList split(Node r, int key) {
         NodeList list = new NodeList();
-        if (r == null) {
+        if (r == null) { //if empty , no anything happend
             return list;
-        } else if (key < r.key) {
+        } else if (key < r.key) { //if key < root.key split left side
             list = split(r.left, key);
             Node r3 = mergeWithRoot(list.r2, r.right, r);
             list.r2 = r3;
             return list;
-        } else { // key>=root.key
+        } else { // key>=root.key // split right side
             list = split(r.right, key);
             Node r4 = mergeWithRoot(r.left, list.r1, r);
             list.r1 = r4;
